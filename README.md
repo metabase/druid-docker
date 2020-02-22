@@ -1,5 +1,5 @@
-DockerHub:
-`metabase/druid`
+### DockerHub
+[`metabase/druid`](https://hub.docker.com/repository/docker/metabase/druid)
 [![](https://images.microbadger.com/badges/version/metabase/druid.svg)](https://microbadger.com/images/metabase/druid)
 [![](https://images.microbadger.com/badges/image/metabase/druid.svg)](https://microbadger.com/images/metabase/druid)
 
