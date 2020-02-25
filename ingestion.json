@@ -1,0 +1,58 @@
+{
+  "type" : "index_parallel",
+  "spec" : {
+    "type" : "index_parallel",
+    "dataSchema" : {
+      "dataSource" : "checkins",
+      "granularitySpec" : {
+        "type" : "uniform",
+        "queryGranularity" : "none",
+        "rollup" : false,
+        "segmentGranularity" : "day",
+        "intervals" : [ "2013/2016" ]
+      },
+      "timestampSpec" : {
+        "column" : "date",
+        "format" : "auto"
+      },
+      "dimensionsSpec" : {
+        "dimensions" : [ "id", "user_last_login", "user_name", "user_password", "venue_category_name", {
+          "name" : "venue_latitude",
+          "type" : "double"
+        }, {
+          "name" : "venue_longitude",
+          "type" : "double"
+        }, "venue_name", {
+          "name" : "venue_price",
+          "type" : "long"
+        } ]
+      },
+      "metricsSpec" : [ {
+        "name" : "count",
+        "type" : "count"
+      }, {
+        "name" : "unique_users",
+        "type" : "hyperUnique",
+        "fieldName" : "user_name"
+      } ]
+    },
+    "ioConfig" : {
+      "type" : "index_parallel",
+      "inputSource" : {
+        "type": "local",
+        "baseDir": "/data",
+        "filter": "rows.json"
+      },
+      "inputFormat" : {
+        "type" : "json"
+      }
+    },
+    "tuningConfig" : {
+      "type" : "index_parallel",
+      "partitionsSpec" : {
+        "type" : "dynamic"
+      },
+      "maxNumConcurrentSubTasks" : 8
+    }
+  }
+}

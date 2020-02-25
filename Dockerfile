@@ -14,7 +14,12 @@ RUN rm $DRUID_ARCHIVE
 
 # Install deps
 RUN apk add bash
-RUN apk add perl
+RUN apk add curl
+
+# Remove unneeded files
+RUN rm -rf $DRUID_DIR/extensions
+RUN rm -rf $DRUID_DIR/hadoop-dependencies
+RUN rm -rf $DRUID_DIR/quickstart
 
 # Create new unprivileged user & switch to it
 RUN addgroup -S druid
@@ -24,11 +29,27 @@ RUN adduser -S druid -G druid
 ENV DRUID_DIR /druid/apache-druid-${DRUID_VERSION}
 RUN chown -R druid $DRUID_DIR
 
+RUN mkdir /data
+RUN chown -R druid /data
+
 # Switch to Druid user
 USER druid
 
-# Copy ./run.sh script from the building dir
 COPY ["./run.sh", "$DRUID_DIR/run.sh"]
+COPY ["./log4j2.properties", "$DRUID_DIR/log4j2.properties"]
+COPY ["./rows.json", "/data/rows.json"]
+COPY ["./ingestion.json", "/data/ingestion.json"]
+COPY ["./ingest.sh", "$DRUID_DIR/ingest.sh"]
+
+# Create temp dir
+RUN mkdir -p $DRUID_DIR/var/tmp
+
+ENV CLUSTER_SIZE micro-quickstart
+ENV LOG4J_PROPERTIES_FILE ${DRUID_DIR}/log4j2.properties
+ENV ENABLE_JAVASCRIPT true
+
+# Ingest the rows.
+RUN $DRUID_DIR/ingest.sh
 
 # coordinator/overlord
 EXPOSE 8081
