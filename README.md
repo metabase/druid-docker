@@ -9,6 +9,12 @@
 docker build -t metabase/druid:0.17.0 .
 ```
 
+The build logic ingests the data in `rows.json` by executing the ingestion spec task `task.json`. This is done in the script `ingest.sh`; tweak as needed.
+
+Why ingest data as part of the build process? In some cases ingestion and indexing can take 10 minutes, on top of
+using an obnoxious amount of memory. Better to do it during build so we can use the image right out of the box instead
+of making CI super slow.
+
 ### Use It
 
 ```bash
