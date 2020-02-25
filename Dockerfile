@@ -38,7 +38,7 @@ USER druid
 COPY ["./run.sh", "$DRUID_DIR/run.sh"]
 COPY ["./log4j2.properties", "$DRUID_DIR/log4j2.properties"]
 COPY ["./rows.json", "/data/rows.json"]
-COPY ["./ingestion.json", "/data/ingestion.json"]
+COPY ["./task.json", "/data/task.json"]
 COPY ["./ingest.sh", "$DRUID_DIR/ingest.sh"]
 
 # Create temp dir

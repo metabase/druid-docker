@@ -77,6 +77,8 @@ start_zookeeper() {
     echo '********************************************************************************'
     echo -e "\n\n"
 
+    mkdir -p var/zk
+
     nohup java `cat $ZK_CONF_DIR/jvm.config | xargs` \
           -cp "lib/*:$ZK_CONF_DIR" \
           -Dzookeeper.jmx.log4j.disable=true \
@@ -103,6 +105,9 @@ start_druid_service() {
     echo '********************************************************************************'
     echo -e "\n\n"
 
+    mkdir -p var/druid/segments
+    mkdir -p var/druid/indexing-logs
+
     nohup java `cat $conf_dir/jvm.config | xargs` \
           -cp "$DRUID_COMMON_CONF_DIR:$conf_dir:lib/*" \
           -Dlog4j.configurationFile="$LOG4J_PROPERTIES_FILE" \
@@ -128,10 +133,15 @@ start_services_if_needed() {
     start_druid_service_if_needed "middleManager" 8091
 }
 
+DRUID_COMMON_PROPERTIES=$DRUID_COMMON_CONF_DIR/common.runtime.properties
+
 if [ "$ENABLE_JAVASCRIPT" = true ]; then
     echo 'Enabling JavaScript.'
-    echo -e "\ndruid.javascript.enabled=true" >> $DRUID_COMMON_CONF_DIR/common.runtime.properties
+    echo -e "\ndruid.javascript.enabled=true" >> $DRUID_COMMON_PROPERTIES
 fi
+
+# Disable extensions that we aren't going to be using like HDFS storage and the Kafka indexing service
+echo -e "\ndruid.extensions.loadList=[]" >> $DRUID_COMMON_PROPERTIES
 
 start_services_if_needed
 
