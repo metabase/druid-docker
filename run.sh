@@ -143,6 +143,9 @@ fi
 # Disable extensions that we aren't going to be using like HDFS storage and the Kafka indexing service
 echo -e "\ndruid.extensions.loadList=[]" >> $DRUID_COMMON_PROPERTIES
 
+# Use faster locking mechanism during ingestion -- see https://github.com/apache/druid/issues/8369#minor-compaction
+echo -e "\ndruid.indexer.tasklock.forceTimeChunkLock=false" >> $DRUID_COMMON_PROPERTIES
+
 start_services_if_needed
 
 echo -e "\n\n"

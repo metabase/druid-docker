@@ -57,3 +57,6 @@ wait_for_all_rows() {
 echo -e "\nWaiting for ingestion to finish. Please be patient, this may take up to 10 minutes..."
 wait_for_datasource
 wait_for_all_rows
+
+echo "Now wait a little while for the ingestion tasks to finish up"
+sleep 10m
