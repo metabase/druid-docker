@@ -16,6 +16,7 @@ echo -e "\n\n"
 ZK_CONF_DIR=$(pwd)/conf/zk
 DRUID_CONF_DIR=$(pwd)/conf/druid/single-server/$CLUSTER_SIZE
 DRUID_COMMON_CONF_DIR=$DRUID_CONF_DIR/_common
+DRUID_COMMON_PROPERTIES=$DRUID_COMMON_CONF_DIR/common.runtime.properties
 
 if [ ! -d "$DRUID_CONF_DIR" ]; then
     echo "Invalid cluster size $CLUSTER_SIZE -- cannot find conf dir $DRUID_CONF_DIR"
@@ -130,22 +131,25 @@ start_services_if_needed() {
     start_druid_service_if_needed "broker" 8082
     start_druid_service_if_needed "historical" 8083
     start_druid_service_if_needed "router" 8888
-    start_druid_service_if_needed "middleManager" 8091
+    if [ "$START_MIDDLE_MANAGER" = true ]; then
+        start_druid_service_if_needed "middleManager" 8091
+    fi
 }
 
-DRUID_COMMON_PROPERTIES=$DRUID_COMMON_CONF_DIR/common.runtime.properties
+tweak_common_properties() {
+    if [ "$ENABLE_JAVASCRIPT" = true ]; then
+        echo 'Enabling JavaScript.'
+        echo -e "\ndruid.javascript.enabled=true" >> $DRUID_COMMON_PROPERTIES
+    fi
 
-if [ "$ENABLE_JAVASCRIPT" = true ]; then
-    echo 'Enabling JavaScript.'
-    echo -e "\ndruid.javascript.enabled=true" >> $DRUID_COMMON_PROPERTIES
-fi
+    # Disable extensions that we aren't going to be using like HDFS storage and the Kafka indexing service
+    echo -e "\ndruid.extensions.loadList=[]" >> $DRUID_COMMON_PROPERTIES
 
-# Disable extensions that we aren't going to be using like HDFS storage and the Kafka indexing service
-echo -e "\ndruid.extensions.loadList=[]" >> $DRUID_COMMON_PROPERTIES
+    # Use faster locking mechanism during ingestion -- see https://github.com/apache/druid/issues/8369#minor-compaction
+    echo -e "\ndruid.indexer.tasklock.forceTimeChunkLock=false" >> $DRUID_COMMON_PROPERTIES
+}
 
-# Use faster locking mechanism during ingestion -- see https://github.com/apache/druid/issues/8369#minor-compaction
-echo -e "\ndruid.indexer.tasklock.forceTimeChunkLock=false" >> $DRUID_COMMON_PROPERTIES
-
+tweak_common_properties
 start_services_if_needed
 
 echo -e "\n\n"

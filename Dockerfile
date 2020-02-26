@@ -48,8 +48,13 @@ ENV CLUSTER_SIZE micro-quickstart
 ENV LOG4J_PROPERTIES_FILE ${DRUID_DIR}/log4j2.properties
 ENV ENABLE_JAVASCRIPT true
 
+ENV START_MIDDLE_MANAGER true
+
 # Ingest the rows.
 RUN $DRUID_DIR/ingest.sh
+
+ENV CLUSTER_SIZE nano-quickstart
+ENV START_MIDDLE_MANAGER false
 
 # coordinator/overlord
 EXPOSE 8081
