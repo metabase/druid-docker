@@ -1,3 +1,7 @@
+# Important Note!
+
+This is not currently used in Metabase CI because it does not seem to run correctly with the limited amount of memory we can give it in Circle. If we switch to a plan that lets us test with larger instance sizes, we can try using this image.
+
 ### DockerHub
 [`metabase/druid`](https://hub.docker.com/repository/docker/metabase/druid)
 [![](https://images.microbadger.com/badges/version/metabase/druid.svg)](https://microbadger.com/images/metabase/druid)
