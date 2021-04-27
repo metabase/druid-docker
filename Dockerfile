@@ -1,14 +1,14 @@
-FROM adoptopenjdk/openjdk8:alpine-jre
+FROM adoptopenjdk/openjdk11:alpine-jre
 
 MAINTAINER Cam Saul <cam@metabase.com>
 
 WORKDIR /druid
 
-ENV DRUID_VERSION 0.17.0
+ENV DRUID_VERSION 0.20.2
 ENV DRUID_ARCHIVE apache-druid-$DRUID_VERSION-bin.tar.gz
 
 # Download Druid
-RUN wget http://apache.spinellicreations.com/druid/$DRUID_VERSION/$DRUID_ARCHIVE
+RUN wget --output-document $DRUID_ARCHIVE https://mirrors.ocf.berkeley.edu/apache/druid/$DRUID_VERSION/$DRUID_ARCHIVE
 RUN tar -xzf $DRUID_ARCHIVE
 RUN rm $DRUID_ARCHIVE
 
